@@ -566,6 +566,7 @@ class CASCache():
 
     def clean_up_refs_until(self, time, remove_func=None):
         ref_heads = os.path.join(self.casdir, 'refs', 'heads')
+        removed_refs = 0
         if remove_func is None:
             remove_func = self.remove
 
@@ -576,6 +577,7 @@ class CASCache():
                 if os.path.getmtime(ref_path) < time:
                     ref = os.path.relpath(ref_path, ref_heads)
                     remove_func(ref)
+                    removed_refs += 1
 
     # remove():
     #
