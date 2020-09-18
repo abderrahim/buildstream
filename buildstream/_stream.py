@@ -948,14 +948,6 @@ class Stream():
                                                   selected,
                                                   except_elements)
 
-        # Set the "required" artifacts that should not be removed
-        # while this pipeline is active
-        #
-        # It must include all the artifacts which are required by the
-        # final product. Note that this is a superset of the build plan.
-        #
-        self._artifacts.mark_required_elements(self._pipeline.dependencies(elements, Scope.ALL))
-
         if selection == PipelineSelection.PLAN and dynamic_plan:
             # We use a dynamic build plan, only request artifacts of top-level targets,
             # others are requested dynamically as needed.

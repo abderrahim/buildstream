@@ -137,7 +137,6 @@ class ArtifactCache():
         self.global_remote_specs = []
         self.project_remote_specs = {}
 
-        self._required_elements = set()       # The elements required for this session
         self._start_time = time.time()        # The start time of the current session
         self._cache_size = None               # The current cache size, sometimes it's an estimate
         self._cache_quota = None              # The cache quota
@@ -245,47 +244,6 @@ class ArtifactCache():
                                   (str(provenance)))
         return cache_specs
 
-    # mark_required_elements():
-    #
-    # Mark elements whose artifacts are required for the current run.
-    #
-    # Artifacts whose elements are in this list will be locked by the artifact
-    # cache and not touched for the duration of the current pipeline.
-    #
-    # Args:
-    #     elements (iterable): A set of elements to mark as required
-    #
-    def mark_required_elements(self, elements):
-
-        # We risk calling this function with a generator, so we
-        # better consume it first.
-        #
-        elements = list(elements)
-
-        # Mark the elements as required. We cannot know that we know the
-        # cache keys yet, so we only check that later when deleting.
-        #
-        self._required_elements.update(elements)
-
-        # For the cache keys which were resolved so far, we bump
-        # the mtime of them.
-        #
-        # This is just in case we have concurrent instances of
-        # BuildStream running with the same artifact cache, it will
-        # reduce the likelyhood of one instance deleting artifacts
-        # which are required by the other.
-        for element in elements:
-            strong_key = element._get_cache_key(strength=_KeyStrength.STRONG)
-            weak_key = element._get_cache_key(strength=_KeyStrength.WEAK)
-            for key in (strong_key, weak_key):
-                if key:
-                    try:
-                        ref = self.get_artifact_fullname(element, key)
-
-                        self.cas.update_mtime(ref)
-                    except CASError:
-                        pass
-
     # clean():
     #
     # Clean the artifact cache as much as possible.
@@ -306,12 +264,10 @@ class ArtifactCache():
         # Start off with an announcement with as much info as possible
         volume_size, volume_avail = self._get_cache_volume_size()
         self._message(MessageType.STATUS, "Starting cache cleanup",
-                      detail=("Elements required by the current build plan: {}\n" +
-                              "User specified quota: {} ({})\n" +
+                      detail=("User specified quota: {} ({})\n" +
                               "Cache usage: {}\n" +
                               "Cache volume: {} total, {} available")
-                      .format(len(self._required_elements),
-                              context.config_cache_quota,
+                      .format(context.config_cache_quota,
                               utils._pretty_size(self._cache_quota_original, dec_places=2),
                               utils._pretty_size(self.get_cache_size(), dec_places=2),
                               utils._pretty_size(volume_size, dec_places=2),
@@ -355,13 +311,12 @@ class ArtifactCache():
         default_conf = os.path.join(os.environ['XDG_CONFIG_HOME'],
                                     'buildstream.conf')
         detail = ("Aborted after removing {} refs and saving {} disk space.\n"
-                  "The remaining {} in the cache is required by the {} elements in your build plan\n\n"
+                  "The remaining {} in the cache is required by the elements in your build plan\n\n"
                   "There is not enough space to complete the build.\n"
                   "Please increase the cache-quota in {} and/or make more disk space."
                   .format(removed_ref_count,
                           utils._pretty_size(space_saved, dec_places=2),
                           utils._pretty_size(self.get_cache_size(), dec_places=2),
-                          len(self._required_elements),
                           (context.config_origin or default_conf)))
 
         if self.full():
