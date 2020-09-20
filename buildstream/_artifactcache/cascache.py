@@ -564,15 +564,18 @@ class CASCache():
         # first element of this list will be the file modified earliest.
         return sorted(zip(mtimes, objs))
 
-    def clean_up_refs_until(self, time):
+    def clean_up_refs_until(self, time, remove_func=None):
         ref_heads = os.path.join(self.casdir, 'refs', 'heads')
+        if remove_func is None:
+            remove_func = self.remove
 
         for root, _, files in os.walk(ref_heads):
             for filename in files:
                 ref_path = os.path.join(root, filename)
                 # Obtain the mtime (the time a file was last modified)
                 if os.path.getmtime(ref_path) < time:
-                    os.unlink(ref_path)
+                    ref = os.path.relpath(ref_path, ref_heads)
+                    remove_func(ref)
 
     # remove():
     #
