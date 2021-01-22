@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>2. Filtering &mdash; BuildStream 1.93.5+368.g7e520677 documentation</title>
+  <title>2. Filtering &mdash; BuildStream 1.93.5+376.g89d3af29 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                1.93.5+368.g7e520677
+                1.93.5+376.g89d3af29
               </div>
             
           
@@ -517,7 +517,7 @@ modes, we can observe the expected behavior.</p>
 <span style="opacity:0.5">    ldconfig "/usr/lib"</span>
 
 WARNING: The --use-localcas option will be deprecated. LocalCAS support is now enabled by default.
-2021-01-20T15:07:03.113+0000 [5402:139897123204928] [buildboxcommon_client.cpp:86] [INFO] Setting d_maxBatchTotalSizeBytes = 4128768 bytes by default
+2021-01-22T07:04:49.310+0000 [5388:139785566138176] [buildboxcommon_client.cpp:86] [INFO] Setting d_maxBatchTotalSizeBytes = 4128768 bytes by default
 + sh -e -c ldconfig "/usr/lib"
 <span style="color:#06989A"><span style="opacity:0.5">[</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">02</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">        </span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">    main</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">hello.bst                     </span><span style="color:#06989A"><span style="opacity:0.5">] </span></span><span style="color:#4E9A06"><span style=""><span style="opacity:0.5">SUCCESS</span></span></span><span style="color:#06989A"><span style="opacity:0.5"> </span></span>Running commands
 <span style="color:#06989A"><span style="opacity:0.5">[</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">02</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">c88714c9</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">    main</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">hello.bst                     </span><span style="color:#06989A"><span style="opacity:0.5">] </span></span><span style="color:#4E9A06"><span style=""><span style="opacity:0.5">SUCCESS</span></span></span><span style="color:#06989A"><span style="opacity:0.5"> </span></span>Integrating sandbox
@@ -526,7 +526,7 @@ WARNING: The --use-localcas option will be deprecated. LocalCAS support is now e
 <span style="opacity:0.5">    hello</span>
 
 WARNING: The --use-localcas option will be deprecated. LocalCAS support is now enabled by default.
-2021-01-20T15:07:05.515+0000 [5426:139976804609856] [buildboxcommon_client.cpp:86] [INFO] Setting d_maxBatchTotalSizeBytes = 4128768 bytes by default
+2021-01-22T07:04:52.172+0000 [5412:139906026798912] [buildboxcommon_client.cpp:86] [INFO] Setting d_maxBatchTotalSizeBytes = 4128768 bytes by default
 Hello Sophia
 </pre></div>
 <p>Here we can see that the hello world program is using the system
@@ -554,16 +554,16 @@ configured default person to say hello to.</p>
 <span style="opacity:0.5">    ldconfig "/usr/lib"</span>
 
 WARNING: The --use-localcas option will be deprecated. LocalCAS support is now enabled by default.
-2021-01-20T15:07:08.604+0000 [5465:140461023067968] [buildboxcommon_client.cpp:86] [INFO] Setting d_maxBatchTotalSizeBytes = 4128768 bytes by default
+2021-01-22T07:04:55.881+0000 [5452:140652023803712] [buildboxcommon_client.cpp:86] [INFO] Setting d_maxBatchTotalSizeBytes = 4128768 bytes by default
 + sh -e -c ldconfig "/usr/lib"
-<span style="color:#06989A"><span style="opacity:0.5">[</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">02</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">        </span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">    main</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">hello.bst                     </span><span style="color:#06989A"><span style="opacity:0.5">] </span></span><span style="color:#4E9A06"><span style=""><span style="opacity:0.5">SUCCESS</span></span></span><span style="color:#06989A"><span style="opacity:0.5"> </span></span>Running commands
-<span style="color:#06989A"><span style="opacity:0.5">[</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">02</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">e7424400</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">    main</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">hello.bst                     </span><span style="color:#06989A"><span style="opacity:0.5">] </span></span><span style="color:#4E9A06"><span style=""><span style="opacity:0.5">SUCCESS</span></span></span><span style="color:#06989A"><span style="opacity:0.5"> </span></span>Integrating sandbox
+<span style="color:#06989A"><span style="opacity:0.5">[</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">04</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">        </span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">    main</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">hello.bst                     </span><span style="color:#06989A"><span style="opacity:0.5">] </span></span><span style="color:#4E9A06"><span style=""><span style="opacity:0.5">SUCCESS</span></span></span><span style="color:#06989A"><span style="opacity:0.5"> </span></span>Running commands
+<span style="color:#06989A"><span style="opacity:0.5">[</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">00</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">04</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">e7424400</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">    main</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">hello.bst                     </span><span style="color:#06989A"><span style="opacity:0.5">] </span></span><span style="color:#4E9A06"><span style=""><span style="opacity:0.5">SUCCESS</span></span></span><span style="color:#06989A"><span style="opacity:0.5"> </span></span>Integrating sandbox
 <span style="color:#06989A"><span style="opacity:0.5">[</span></span><span style="color:#C4A000">--</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">--</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">--</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">e7424400</span><span style="color:#06989A"><span style="opacity:0.5">][</span></span><span style="color:#C4A000">    main</span><span style="color:#06989A"><span style="opacity:0.5">:</span></span><span style="color:#C4A000">hello.bst                     </span><span style="color:#06989A"><span style="opacity:0.5">] </span></span><span style="color:#06989A"><span style=""><span style="opacity:0.5">STATUS </span></span></span><span style="color:#06989A"><span style="opacity:0.5"> </span></span>Running command
 
 <span style="opacity:0.5">    hello</span>
 
 WARNING: The --use-localcas option will be deprecated. LocalCAS support is now enabled by default.
-2021-01-20T15:07:11.060+0000 [5489:139845749481280] [buildboxcommon_client.cpp:86] [INFO] Setting d_maxBatchTotalSizeBytes = 4128768 bytes by default
+2021-01-22T07:05:00.740+0000 [5476:140440011128640] [buildboxcommon_client.cpp:86] [INFO] Setting d_maxBatchTotalSizeBytes = 4128768 bytes by default
 Hello stranger
 </pre></div>
 <p>And now we’re reverting to the behavior we have when no
