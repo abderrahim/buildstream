@@ -200,7 +200,8 @@ When maintaining a BuildStream project, it can be convenient to downstream users
 of your project to provide access to a :ref:`cache server <cache_servers>` you maintain.
 
 The project can provide *recommended* artifact cache servers through project configuration
-using the same semantics as one normally uses in :ref:`user configuration <config_cache_servers>`:
+using the same semantics as one normally uses in the ``servers`` list of the
+:ref:`cache server user configuration <config_cache_servers>`:
 
 .. code:: yaml
 
@@ -231,8 +232,8 @@ using the same semantics as one normally uses in :ref:`user configuration <confi
 Source cache server
 ~~~~~~~~~~~~~~~~~~~
 In the same way as artifact cache servers, the project can provide *recommended* source cache
-servers through project configuration using the same semantics as one normally uses in
-:ref:`user configuration <config_cache_servers>`:
+servers through project configuration using the same semantics as one normally uses in the
+``servers`` list of the :ref:`cache server user configuration <config_cache_servers>`:
 
 .. code:: yaml
 

@@ -118,59 +118,73 @@ Cache server configuration is declared in the following way:
 
 .. code:: yaml
 
-   url: https://cache-server.com/cache:11001
-   instance-name: main
-   type: both
-   push: true
-   auth:
-     server-cert: server.crt
-     client-cert: client.crt
-     client-key: client.key
+   override-project-caches: false
+   servers:
+   - url: https://cache-server.com/cache:11001
+     instance-name: main
+     type: both
+     push: true
+     auth:
+       server-cert: server.crt
+       client-cert: client.crt
+       client-key: client.key
 
 **Attributes:**
 
-* ``url``
+* ``override-project-caches``
 
-  Indicates the ``http`` or ``https`` url and optionally the port number of
-  where the cache server is located.
+  Whether this user configuration overrides the project recommendations for
+  :ref:`artifact caches <project_artifact_cache>` or :ref:`source caches <project_source_cache>`.
 
-* ``instance-name``
+  If this is false (which is the default), then project recommended cache
+  servers will be observed after user specified caches.
 
-  Instance names separate different shards on the same endpoint (``url``).
+* ``servers``
 
-  The instance name is optional, and not all cache server implementations support
-  instance names. The instance name should be given to you by the
-  service provider of each service.
+  This is the list of cache servers in the configuration block, every entry
+  in the block represents a server which will be accessed in the specified order.
 
-* ``type``
+  * ``url``
 
-  The type of service you intend to use this cache server for. If unspecified,
-  the default value for this field is ``both``.
+    Indicates the ``http`` or ``https`` url and optionally the port number of
+    where the cache server is located.
 
-  * ``storage``
+  * ``instance-name``
 
-    Use this cache service for storage.
+    Instance names separate different shards on the same endpoint (``url``).
 
-  * ``index``
+    The instance name is optional, and not all cache server implementations support
+    instance names. The instance name should be given to you by the
+    service provider of each service.
 
-    Use this cache service for index content expected to be present in one
-    or more *storage* services.
+  * ``type``
 
-  * ``both``
+    The type of service you intend to use this cache server for. If unspecified,
+    the default value for this field is ``both``.
 
-    Use this cache service for both indexing and storing data.
+    * ``storage``
 
+      Use this cache service for storage.
 
-* ``push``
+    * ``index``
 
-  Set this to ``true`` if you intend to upload data to this cache server.
+      Use this cache service for index content expected to be present in one
+      or more *storage* services.
 
-  Normally this requires additional credentials in the ``auth`` field.
+    * ``both``
 
-* ``auth``
+      Use this cache service for both indexing and storing data.
 
-  The :ref:`authentication attributes <config_remote_auth>` to connect to
-  this server.
+  * ``push``
+
+    Set this to ``true`` if you intend to upload data to this cache server.
+
+    Normally this requires additional credentials in the ``auth`` field.
+
+  * ``auth``
+
+    The :ref:`authentication attributes <config_remote_auth>` to connect to
+    this server.
 
 
 .. _config_cache_server_list:
@@ -226,12 +240,14 @@ toplevel of the user configuration.
    # Configure a global artifact server for pushing and pulling artifacts
    #
    artifacts:
-   - url: https://artifacts.com/artifacts:11001
-     push: true
-     auth:
-       server-cert: server.crt
-       client-cert: client.crt
-       client-key: client.key
+     override-project-caches: false
+     servers:
+     - url: https://artifacts.com/artifacts:11001
+       push: true
+       auth:
+         server-cert: server.crt
+         client-cert: client.crt
+         client-key: client.key
 
 
 Project overrides
@@ -252,12 +268,14 @@ artifact cache servers declared in the global caches.
    projects:
      foo:
        artifacts:
-       - url: https://artifacts.com/artifacts:11001
-         push: true
-         auth:
-           server-cert: server.crt
-           client-cert: client.crt
-           client-key: client.key
+         override-project-caches: false
+         servers:
+         - url: https://artifacts.com/artifacts:11001
+           push: true
+           auth:
+             server-cert: server.crt
+             client-cert: client.crt
+             client-key: client.key
 
 
 Project recommendations
@@ -297,12 +315,14 @@ toplevel of the user configuration.
    # Configure a global source cache server for pushing and pulling sources
    #
    source-caches:
-   - url: https://sources.com/sources:11001
-     push: true
-     auth:
-       server-cert: server.crt
-       client-cert: client.crt
-       client-key: client.key
+     override-project-caches: false
+     servers:
+     - url: https://sources.com/sources:11001
+       push: true
+       auth:
+         server-cert: server.crt
+         client-cert: client.crt
+         client-key: client.key
 
 
 Project overrides
@@ -323,12 +343,14 @@ source cache servers declared in the global caches.
    projects:
      foo:
        source-caches:
-       - url: https://sources.com/sources:11001
-         push: true
-         auth:
-           server-cert: server.crt
-           client-cert: client.crt
-           client-key: client.key
+         override-project-caches: false
+         servers:
+         - url: https://sources.com/sources:11001
+           push: true
+           auth:
+             server-cert: server.crt
+             client-cert: client.crt
+             client-key: client.key
 
 
 Project recommendations
