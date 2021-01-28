@@ -42,6 +42,7 @@ from .node import Node, MappingNode
 if TYPE_CHECKING:
     # pylint: disable=cyclic-import
     from ._project import Project
+
     # pylint: enable=cyclic-import
 
 
@@ -176,9 +177,9 @@ class Context:
         # Whether elements must be rebuilt when their dependencies have changed
         self._strict_build_plan: Optional[bool] = None
 
-        # Lists of globally configured cache specs
-        self._global_artifact_cache_specs: List[RemoteSpec] = []
-        self._global_source_cache_specs: List[RemoteSpec] = []
+        # Lists of globally configured cache configurations
+        self._global_artifact_cache_config: _CacheConfig = _CacheConfig(False, [])
+        self._global_source_cache_config: _CacheConfig = _CacheConfig(False, [])
 
         # Set of all actively configured remote specs
         self._active_artifact_cache_specs: Set[RemoteSpec] = set()
@@ -342,13 +343,13 @@ class Context:
                 LoadErrorReason.INVALID_DATA,
             ) from e
 
-        # Load artifact remote specs
-        caches = defaults.get_sequence("artifacts", default=[], allowed_types=[MappingNode])
-        self._global_artifact_cache_specs = [RemoteSpec.new_from_node(node) for node in caches]
+        # Load global artifact cache configuration
+        cache_config = defaults.get_mapping("artifacts", default={})
+        self._global_artifact_cache_config = _CacheConfig.new_from_node(cache_config)
 
-        # Load source cache remote specs
-        caches = defaults.get_sequence("source-caches", default=[], allowed_types=[MappingNode])
-        self._global_source_cache_specs = [RemoteSpec.new_from_node(node) for node in caches]
+        # Load global source cache configuration
+        cache_config = defaults.get_mapping("source-caches", default={})
+        self._global_source_cache_config = _CacheConfig.new_from_node(cache_config)
 
         # Load the global remote execution config including pull-artifact-files setting
         remote_execution = defaults.get_mapping("remote-execution", default=None)
@@ -517,12 +518,9 @@ class Context:
         project = self.get_toplevel_project()
         if project:
             override_node = self.get_overrides(project.name)
-            if override_node:
-                remote_execution = override_node.get_mapping("remote-execution", default=None)
-                if remote_execution:
-                    self.pull_artifact_files, self.remote_execution_specs = self._load_remote_execution(
-                        remote_execution
-                    )
+            remote_execution = override_node.get_mapping("remote-execution", default=None)
+            if remote_execution:
+                self.pull_artifact_files, self.remote_execution_specs = self._load_remote_execution(remote_execution)
 
         # Collect a table of which specs apply to each project, these
         # are calculated here and handed over to the asset caches.
@@ -534,37 +532,46 @@ class Context:
         cli_source_remotes = [source_remote] if source_remote else []
 
         #
+        # Helper function to resolve which remote specs apply for a given project
+        #
+        def resolve_specs_for_project(
+            project: "Project", global_config: _CacheConfig, override_key: str, project_attribute: str,
+        ) -> List[RemoteSpec]:
+
+            # Obtain the overrides
+            override_node = self.get_overrides(project.name)
+            override_config_node = override_node.get_mapping(override_key, default={})
+            override_config = _CacheConfig.new_from_node(override_config_node)
+            if override_config.override_projects:
+                return override_config.remote_specs
+            elif global_config.override_projects:
+                return global_config.remote_specs
+
+            # If there were no explicit overrides, then take either the project specific
+            # config or fallback to the global config, and tack on the project recommended
+            # remotes at the end.
+            #
+            config_specs = override_config.remote_specs or global_config.remote_specs
+            project_specs = getattr(project, project_attribute)
+            all_specs = config_specs + project_specs
+            return list(utils._deduplicate(all_specs))
+
+        #
         # Maintain our list of remote specs for artifact and source caches
         #
         for project in self._projects:
-
             artifact_specs: List[RemoteSpec] = []
             source_specs: List[RemoteSpec] = []
 
-            override_node = self.get_overrides(project.name)
-
-            # Resolve which remote specs to use, CLI -> Override -> Global -> Project recommendation
             if connect_artifact_cache:
-                caches = override_node.get_sequence("artifacts", default=[], allowed_types=[MappingNode])
-                override_artifact_specs: List[RemoteSpec] = [RemoteSpec.new_from_node(node) for node in caches]
-                artifact_specs = (
-                    cli_artifact_remotes
-                    or override_artifact_specs
-                    or self._global_artifact_cache_specs
-                    or project.artifact_cache_specs
+                artifact_specs = cli_artifact_remotes or resolve_specs_for_project(
+                    project, self._global_artifact_cache_config, "artifacts", "artifact_cache_specs",
                 )
-                artifact_specs = list(utils._deduplicate(artifact_specs))
 
             if connect_source_cache:
-                caches = override_node.get_sequence("source-caches", default=[], allowed_types=[MappingNode])
-                override_source_specs: List[RemoteSpec] = [RemoteSpec.new_from_node(node) for node in caches]
-                source_specs = (
-                    cli_source_remotes
-                    or override_source_specs
-                    or self._global_source_cache_specs
-                    or project.source_cache_specs
+                source_specs = cli_source_remotes or resolve_specs_for_project(
+                    project, self._global_source_cache_config, "source-caches", "source_cache_specs",
                 )
-                source_specs = list(utils._deduplicate(source_specs))
 
             # Store them for lookups later on
             project_artifact_cache_specs[project.name] = artifact_specs
@@ -703,3 +710,23 @@ class Context:
             remote_execution_specs = None
 
         return pull_artifact_files, remote_execution_specs
+
+
+# _CacheConfig
+#
+# A convenience object for parsing artifact/source cache configurations
+#
+class _CacheConfig:
+    def __init__(self, override_projects: bool, remote_specs: List[RemoteSpec]):
+        self.override_projects: bool = override_projects
+        self.remote_specs: List[RemoteSpec] = remote_specs
+
+    @classmethod
+    def new_from_node(cls, node: MappingNode) -> "_CacheConfig":
+        node.validate_keys(["override-project-caches", "servers"])
+        servers = node.get_sequence("servers", default=[], allowed_types=[MappingNode])
+
+        override_projects: bool = node.get_bool("push", default=False)
+        remote_specs: List[RemoteSpec] = [RemoteSpec.new_from_node(node) for node in servers]
+
+        return cls(override_projects, remote_specs)
