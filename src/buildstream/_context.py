@@ -95,6 +95,12 @@ class Context:
         # The global remote execution configuration
         self.remote_execution_specs: Optional[RemoteExecutionSpec] = None
 
+        # The configured artifact cache remote specs for each project
+        self.project_artifact_cache_specs: Dict[str, List[RemoteSpec]] = {}
+
+        # The configured source cache remote specs for each project
+        self.project_source_cache_specs: Dict[str, List[RemoteSpec]] = {}
+
         # The directory to store build logs
         self.logdir: Optional[str] = None
 
@@ -522,12 +528,6 @@ class Context:
             if remote_execution:
                 self.pull_artifact_files, self.remote_execution_specs = self._load_remote_execution(remote_execution)
 
-        # Collect a table of which specs apply to each project, these
-        # are calculated here and handed over to the asset caches.
-        #
-        project_artifact_cache_specs: Dict[str, List[RemoteSpec]] = {}
-        project_source_cache_specs: Dict[str, List[RemoteSpec]] = {}
-
         cli_artifact_remotes = [artifact_remote] if artifact_remote else []
         cli_source_remotes = [source_remote] if source_remote else []
 
@@ -573,9 +573,9 @@ class Context:
                     project, self._global_source_cache_config, "source-caches", "source_cache_specs",
                 )
 
-            # Store them for lookups later on
-            project_artifact_cache_specs[project.name] = artifact_specs
-            project_source_cache_specs[project.name] = source_specs
+            # Advertize the per project remote specs publicly for the frontend
+            self.project_artifact_cache_specs[project.name] = artifact_specs
+            self.project_source_cache_specs[project.name] = source_specs
 
             #
             # Now that we know which remote specs are going to be used, maintain
@@ -589,9 +589,9 @@ class Context:
 
         # Now initialize the underlying asset caches
         #
-        self.artifactcache.setup_remotes(self._active_artifact_cache_specs, project_artifact_cache_specs)
-        self.elementsourcescache.setup_remotes(self._active_source_cache_specs, project_source_cache_specs)
-        self.sourcecache.setup_remotes(self._active_source_cache_specs, project_source_cache_specs)
+        self.artifactcache.setup_remotes(self._active_artifact_cache_specs, self.project_artifact_cache_specs)
+        self.elementsourcescache.setup_remotes(self._active_source_cache_specs, self.project_source_cache_specs)
+        self.sourcecache.setup_remotes(self._active_source_cache_specs, self.project_source_cache_specs)
 
     # get_workspaces():
     #
