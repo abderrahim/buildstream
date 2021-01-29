@@ -122,6 +122,17 @@ class RemoteSpec:
             )
         )
 
+    def __str__(self) -> str:
+        string = self.url + "\n"
+        string += "push: {} type: {} instance: {}\n".format(self.push, self.remote_type, self.instance_name)
+        if self._spec_node:
+            provenance = str(self._spec_node.get_provenance())
+        else:
+            provenance = "command line"
+        string += "loaded from: {}".format(provenance)
+
+        return string
+
     # server_cert()
     #
     @property
@@ -238,6 +249,7 @@ class RemoteSpec:
             client_key=client_key,
             client_cert=client_cert,
             instance_name=instance_name,
+            spec_node=spec_node,
         )
 
     # _parse_auth():
