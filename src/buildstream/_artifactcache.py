@@ -185,7 +185,9 @@ class ArtifactCache(AssetCache):
 
         if errors and not artifact_digest:
             raise ArtifactError(
-                "Failed to pull artifact {}".format(display_key), detail="\n".join(str(e) for e in errors)
+                "Failed to pull artifact {}".format(display_key),
+                detail="\n".join(str(e) for e in errors),
+                temporary=True,
             )
 
         # If we don't have an artifact, we can't exactly pull our
@@ -215,7 +217,9 @@ class ArtifactCache(AssetCache):
 
         if errors:
             raise ArtifactError(
-                "Failed to pull artifact {}".format(display_key), detail="\n".join(str(e) for e in errors)
+                "Failed to pull artifact {}".format(display_key),
+                detail="\n".join(str(e) for e in errors),
+                temporary=True,
             )
 
         return False
